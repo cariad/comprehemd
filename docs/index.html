@@ -1,0 +1,351 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comprehemd</title>
+    <meta name="author" content="Cariad Eccleston" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤔</text></svg>" />
+    <style>
+body {
+  /* Thanks! https://systemfontstack.com */
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+}
+
+body {
+  --accent: #f1fa8c; /* Copied from Dracula */
+  --paragraph-spacing: 2rem;
+  --paragraph-spacing-smaller: 0.6rem;
+
+  --regular-margin: 43rem;
+  --grey: #ccc;
+
+  --code-padding: 2rem;
+
+  background-color: var(--white);
+  color: var(--black);
+
+  margin-top: 2rem;
+  margin-bottom: 8rem;
+
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+  font-size: 1.2rem;
+}
+
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ol,
+p,
+ul {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--regular-margin)
+}
+
+article > .highlight,
+article > .thtml {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: calc(var(--regular-margin) - (var(--code-padding)*2));
+}
+
+table {
+  margin-top: var(--paragraph-spacing);
+  margin-left: auto;
+  margin-right: auto;
+  width: var(--regular-margin);
+  max-width: var(--regular-margin);
+}
+
+table td,
+table th {
+  padding-left: 0;
+  padding-right: 1rem;
+  padding-top: 0.4rem;
+}
+
+table td:last-child,
+table th:last-child {
+  padding-right: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+ol,
+ul {
+  margin-top: var(--paragraph-spacing-smaller);
+  margin-bottom: 0;
+
+  max-width: calc(var(--regular-margin) - 2rem);
+}
+
+li {
+  margin-bottom: var(--paragraph-spacing-smaller);
+}
+
+h1 {
+  font-size: 4rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h1, h2, h3, h4, h5, h6, th {
+  border-bottom: 1px solid var(--grey);
+  padding-bottom: 0.3rem;
+}
+
+nav.toc {
+  font-size: 0.8em;
+  letter-spacing: 0.02rem;
+}
+
+nav.toc ol {
+  padding-left: 1rem;
+}
+
+nav.toc li ol {
+  margin-top: 0.1rem;
+}
+
+nav.toc li {
+  list-style: none;
+  margin-bottom: 0.1rem;
+}
+
+p, li, pre {
+  line-height: 1.6;
+}
+
+.thtml {
+  overflow-x: auto;
+}
+
+blockquote {
+  font-style: italic;
+  border-left: 0.6rem solid var(--red);
+  padding-left: 1rem;
+}
+
+a > code,
+h2 > code,
+h3 > code,
+h4 > code,
+h5 > code,
+h6 > code,
+li > code,
+p > code {
+  background: var(--accent);
+  border-radius: 0.3em;
+
+  letter-spacing: 0.04em;
+
+  padding-top: 0.4em;
+  padding-bottom: 0.2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+li > code,
+p > code {
+  font-size: 0.85em;
+}
+
+sup {
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
+}
+
+p {
+  margin-bottom: 0;
+  margin-top: var(--paragraph-spacing);
+}
+
+code, pre {
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
+
+.highlight, .thtml {
+  font-size: 0.8em;
+
+  /* background-color: #1B2A41; */
+  /* color: #fff; */
+
+  padding: var(--code-padding);
+  border-radius: 0.3em;
+
+  margin-top: var(--paragraph-spacing-smaller);
+  margin-bottom: var(--paragraph-spacing);
+
+  box-shadow: 0 0 0.6rem var(--grey)
+}
+
+
+.highlight > pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 0;
+}
+
+body > footer {
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+}
+
+nav > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav > ul > li {
+  display: inline;
+  margin-right: 1rem;
+}
+
+h2+h3,
+h3+h4,
+h4+h5,
+h5+h6 {
+  margin-top: 0;
+}
+
+h2, h3, h4, h5, h6 {
+  margin-bottom: var(--paragraph-spacing);
+  margin-top: calc(var(--paragraph-spacing) * 2);
+}
+
+/* Dracula Theme v1.2.5
+ *
+ * https://github.com/dracula/pygments
+ *
+ * Copyright 2016, All rights reserved
+ *
+ * Code licensed under the MIT license
+ * http://zenorocha.mit-license.org
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Dracula Theme
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Rob G <wowmotty@gmail.com>
+ * @author Chris Bracco <chris@cbracco.me>
+ * @author Zeno Rocha <hi@zenorocha.com>
+ */
+
+ .highlight .hll { background-color: #f1fa8c }
+ .highlight  { background: #282a36; color: #f8f8f2 }
+ .highlight .c { color: #6272a4 } /* Comment */
+ .highlight .err { color: #f8f8f2 } /* Error */
+ .highlight .g { color: #f8f8f2 } /* Generic */
+ .highlight .k { color: #ff79c6 } /* Keyword */
+ .highlight .l { color: #f8f8f2 } /* Literal */
+ .highlight .n { color: #f8f8f2 } /* Name */
+ .highlight .o { color: #ff79c6 } /* Operator */
+ .highlight .x { color: #f8f8f2 } /* Other */
+ .highlight .p { color: #f8f8f2 } /* Punctuation */
+ .highlight .ch { color: #6272a4 } /* Comment.Hashbang */
+ .highlight .cm { color: #6272a4 } /* Comment.Multiline */
+ .highlight .cp { color: #ff79c6 } /* Comment.Preproc */
+ .highlight .cpf { color: #6272a4 } /* Comment.PreprocFile */
+ .highlight .c1 { color: #6272a4 } /* Comment.Single */
+ .highlight .cs { color: #6272a4 } /* Comment.Special */
+ .highlight .gd { color: #8b080b } /* Generic.Deleted */
+ .highlight .ge { color: #f8f8f2; text-decoration: underline } /* Generic.Emph */
+ .highlight .gr { color: #f8f8f2 } /* Generic.Error */
+ .highlight .gh { color: #f8f8f2; font-weight: bold } /* Generic.Heading */
+ .highlight .gi { color: #f8f8f2; font-weight: bold } /* Generic.Inserted */
+ .highlight .go { color: #44475a } /* Generic.Output */
+ .highlight .gp { color: #f8f8f2 } /* Generic.Prompt */
+ .highlight .gs { color: #f8f8f2 } /* Generic.Strong */
+ .highlight .gu { color: #f8f8f2; font-weight: bold } /* Generic.Subheading */
+ .highlight .gt { color: #f8f8f2 } /* Generic.Traceback */
+ .highlight .kc { color: #ff79c6 } /* Keyword.Constant */
+ .highlight .kd { color: #8be9fd; font-style: italic } /* Keyword.Declaration */
+ .highlight .kn { color: #ff79c6 } /* Keyword.Namespace */
+ .highlight .kp { color: #ff79c6 } /* Keyword.Pseudo */
+ .highlight .kr { color: #ff79c6 } /* Keyword.Reserved */
+ .highlight .kt { color: #8be9fd } /* Keyword.Type */
+ .highlight .ld { color: #f8f8f2 } /* Literal.Date */
+ .highlight .m { color: #bd93f9 } /* Literal.Number */
+ .highlight .s { color: #f1fa8c } /* Literal.String */
+ .highlight .na { color: #50fa7b } /* Name.Attribute */
+ .highlight .nb { color: #8be9fd; font-style: italic } /* Name.Builtin */
+ .highlight .nc { color: #50fa7b } /* Name.Class */
+ .highlight .no { color: #f8f8f2 } /* Name.Constant */
+ .highlight .nd { color: #f8f8f2 } /* Name.Decorator */
+ .highlight .ni { color: #f8f8f2 } /* Name.Entity */
+ .highlight .ne { color: #f8f8f2 } /* Name.Exception */
+ .highlight .nf { color: #50fa7b } /* Name.Function */
+ .highlight .nl { color: #8be9fd; font-style: italic } /* Name.Label */
+ .highlight .nn { color: #f8f8f2 } /* Name.Namespace */
+ .highlight .nx { color: #f8f8f2 } /* Name.Other */
+ .highlight .py { color: #f8f8f2 } /* Name.Property */
+ .highlight .nt { color: #ff79c6 } /* Name.Tag */
+ .highlight .nv { color: #8be9fd; font-style: italic } /* Name.Variable */
+ .highlight .ow { color: #ff79c6 } /* Operator.Word */
+ .highlight .w { color: #f8f8f2 } /* Text.Whitespace */
+ .highlight .mb { color: #bd93f9 } /* Literal.Number.Bin */
+ .highlight .mf { color: #bd93f9 } /* Literal.Number.Float */
+ .highlight .mh { color: #bd93f9 } /* Literal.Number.Hex */
+ .highlight .mi { color: #bd93f9 } /* Literal.Number.Integer */
+ .highlight .mo { color: #bd93f9 } /* Literal.Number.Oct */
+ .highlight .sa { color: #f1fa8c } /* Literal.String.Affix */
+ .highlight .sb { color: #f1fa8c } /* Literal.String.Backtick */
+ .highlight .sc { color: #f1fa8c } /* Literal.String.Char */
+ .highlight .dl { color: #f1fa8c } /* Literal.String.Delimiter */
+ .highlight .sd { color: #f1fa8c } /* Literal.String.Doc */
+ .highlight .s2 { color: #f1fa8c } /* Literal.String.Double */
+ .highlight .se { color: #f1fa8c } /* Literal.String.Escape */
+ .highlight .sh { color: #f1fa8c } /* Literal.String.Heredoc */
+ .highlight .si { color: #f1fa8c } /* Literal.String.Interpol */
+ .highlight .sx { color: #f1fa8c } /* Literal.String.Other */
+ .highlight .sr { color: #f1fa8c } /* Literal.String.Regex */
+ .highlight .s1 { color: #f1fa8c } /* Literal.String.Single */
+ .highlight .ss { color: #f1fa8c } /* Literal.String.Symbol */
+ .highlight .bp { color: #f8f8f2; font-style: italic } /* Name.Builtin.Pseudo */
+ .highlight .fm { color: #50fa7b } /* Name.Function.Magic */
+ .highlight .vc { color: #8be9fd; font-style: italic } /* Name.Variable.Class */
+ .highlight .vg { color: #8be9fd; font-style: italic } /* Name.Variable.Global */
+ .highlight .vi { color: #8be9fd; font-style: italic } /* Name.Variable.Instance */
+ .highlight .vm { color: #8be9fd; font-style: italic } /* Name.Variable.Magic */
+ .highlight .il { color: #bd93f9 } /* Literal.Number.Integer.Long */
+</style>
+  </head>
+
+  <body>
+    <article>
+        <h1>🤔 Comprehemd</h1>
+<p><strong>Comprehemd</strong> is a Python package for parsing Markdown documents.</p>
+    </article>
+  </body>
+
+</html>
