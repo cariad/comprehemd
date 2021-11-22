@@ -143,7 +143,6 @@ jobs:
       - run: pipenv sync --dev
       - run: pipenv run build
       - run: pip install dist/*
-      - run: pipenv run ./scripts/test-cli.sh
       - run: if [[ -z "${CIRCLE_TAG}" ]]; then circleci-agent step halt; fi
       - run: pipenv run twine upload dist/*
 
