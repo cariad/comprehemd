@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Comprehemd</title>
+    <title>CompreheMD</title>
     <meta name="author" content="Cariad Eccleston" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤔</text></svg>" />
     <style>
@@ -343,8 +343,124 @@ h2, h3, h4, h5, h6 {
 
   <body>
     <article>
-        <h1>🤔 Comprehemd</h1>
-<p><strong>Comprehemd</strong> is a Python package for parsing Markdown documents.</p>
+        <h1>🤔 CompreheMD</h1>
+<p><strong>CompreheMD</strong> is a Python package for parsing Markdown documents.</p>
+<p>The parser currently identifies:</p>
+<ul>
+<li>Headings</li>
+<li>Code blocks<ul>
+<li>Backtick and tilde fenced, with language</li>
+<li>Indented</li>
+</ul>
+</li>
+</ul>
+<p>Everything else is currently recognised as plain text.</p>
+<p><nav class="toc"><ol><li><a href="#quick-start">Quick start</a><ol><li><a href="#installation">Installation</a></li><li><a href="#example">Example</a></li></ol></li><li><a href="#usage">Usage</a><ol><li><a href="#markdownparser">MarkdownParser</a></li><li><a href="#outline">Outline</a></li><li><a href="#blocks">Blocks</a></li></ol></li><li><a href="#project">Project</a><ol><li><a href="#contributing">Contributing</a></li><li><a href="#licence">Licence</a></li><li><a href="#author">Author</a></li><li><a href="#acknowledgements">Acknowledgements</a></li></ol></li></ol></nav></p>
+<h2>Quick start<a id="quick-start"></a></h2>
+<h3>Installation<a id="installation"></a></h3>
+<p>CompreheMD requires Python 3.8 or later.</p>
+<p>Install CompreheMD via pip:</p>
+<div class="highlight"><pre><span></span>pip install comprehemd
+</pre></div>
+
+<h3>Example<a id="example"></a></h3>
+<p>This example simply prints the parsed blocks of an <a href="https://github.com/cariad/comprehemd/blob/main/docs/example.md">example document</a>:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">MarkdownParser</span>
+
+<span class="k">class</span> <span class="nc">CustomMarkdownParser</span><span class="p">(</span><span class="n">MarkdownParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">CustomMarkdownParser</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />Block: <br />HeadingBlock (2): Introduction<br />Block: <br />Block: This is just a short example document.<br />Block: <br />HeadingBlock (2): Block examples<br />Block: <br />Block: Here's some backtick-fenced code:<br />Block: <br />CodeBlock (python): print("Hello, world!")<br />Block: <br />Block: Here's some tilde-fenced code:<br />Block: <br />CodeBlock (python): print("Hello, galaxy!")<br />Block: <br />Block: Here's some indented code:<br />Block: <br />CodeBlock (<none>): print("Hello, multiverse!")<br />Block: <br />Block: That's your lot!<br /></code></pre>
+
+
+
+<h2>Usage<a id="usage"></a></h2>
+<h3>MarkdownParser<a id="markdownparser"></a></h3>
+<p>When fed chunks of Markdown, the <code>MarkdownParser</code> class calls handler functions as and when blocks are recognised.</p>
+<p>For example, this code will print only the headings in a document:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">HeadingBlock</span><span class="p">,</span> <span class="n">MarkdownParser</span>
+
+<span class="k">class</span> <span class="nc">CustomMarkdownParser</span><span class="p">(</span><span class="n">MarkdownParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_heading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">HeadingBlock</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">CustomMarkdownParser</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />HeadingBlock (2): Introduction<br />HeadingBlock (2): Block examples<br /></code></pre>
+
+
+
+<h4>Handlers<a id="handlers"></a></h4>
+<p><code>handle_block(block: Block)</code> is called for every parsed block.</p>
+<p><code>handle_code_block(block: CodeBlock)</code> is called for every parsed code block.</p>
+<p><code>handle_heading(block: HeadingBlock)</code> is called for every parsed heading block.</p>
+<h4>Feeding<a id="feeding"></a></h4>
+<p>To feed a text stream into the parser, call <code>read(reader: IO[str])</code>.</p>
+<p>To feed in your own ad-hoc chunks, call <code>feed(chunk: str)</code>. Each chunk can be as large or small as suits. Call <code>close()</code> at the end to ensure buffered work is flushed through.</p>
+<h3>Outline<a id="outline"></a></h3>
+<p>Create the parser with <code>MarkdownParser(outline=True)</code> to generate an outline as the document is parsed.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">MarkdownParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownParser</span><span class="p">(</span><span class="n">outline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">outline</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">- [An Example Document](#an-example-document)<br />  - [Introduction](#introduction)<br />  - [Block examples](#block-examples)<br /></code></pre>
+
+
+
+<p>The <code>Outline</code> class exposes its items on the <code>root</code> property.</p>
+<p>An outline can also be rendered to Markdown via the <code>render()</code> method.</p>
+<h3>Blocks<a id="blocks"></a></h3>
+<h4>Block<a id="block"></a></h4>
+<p>The <code>Block</code> class is the base of all blocks.</p>
+<ul>
+<li><code>source</code> returns the original Markdown source for the block.</li>
+<li><code>text</code> returns the meaningful text representation of the block.</li>
+</ul>
+<h4>CodeBlock<a id="codeblock"></a></h4>
+<p>The <code>CodeBlock</code> class represents a code block.</p>
+<ul>
+<li><code>language</code> returns the language hint if one was specified. For example, <code>```json</code> describes "json".</li>
+<li>The block can be rendered to Markdown with any fence type via the <code>render(writer: IO[str], fence: Fence)</code> method.</li>
+</ul>
+<h4>HeadingBlock<a id="headingblock"></a></h4>
+<p>The <code>HeadingBlock</code> class represents a heading.</p>
+<ul>
+<li><code>anchor</code> returns the heading's anchor.</li>
+<li><code>level</code> returns the heading's level (i.e. 1 for the top-most heading, down to 6 for the lowest).</li>
+</ul>
+<h2>Project<a id="project"></a></h2>
+<h3>Contributing<a id="contributing"></a></h3>
+<p>To contribute a bug report, enhancement or feature request, please raise an issue at <a href="https://github.com/cariad/comprehemd/issues">github.com/cariad/comprehemd/issues</a>.</p>
+<p>If you want to contribute a code change, please raise an issue first so we can chat about the direction you want to take.</p>
+<h3>Licence<a id="licence"></a></h3>
+<p>CompreheMD is released at <a href="https://github.com/cariad/comprehemd">github.com/cariad/comprehemd</a> under the MIT Licence.</p>
+<p>See <a href="https://github.com/cariad/comprehemd/blob/main/LICENSE">LICENSE</a> for more information.</p>
+<h3>Author<a id="author"></a></h3>
+<p>Hello! 👋 I'm <strong>Cariad Eccleston</strong> and I'm a freelance DevOps and backend engineer. My contact details are available on my personal wiki at <a href="https://cariad.earth">cariad.earth</a>.</p>
+<p>Please consider supporting my open source projects by <a href="https://github.com/sponsors/cariad/">sponsoring me on GitHub</a>.</p>
+<h3>Acknowledgements<a id="acknowledgements"></a></h3>
+<ul>
+<li>This documentation was pressed by <a href="https://github.com/cariad/edition">Edition</a>.</li>
+</ul>
     </article>
   </body>
 

@@ -41,9 +41,11 @@ setup(
     name="comprehemd",
     packages=[
         "comprehemd",
+        "comprehemd.code_patterns",
     ],
     package_data={
         "comprehemd": ["py.typed"],
+        "comprehemd.code_patterns": ["py.typed"],
     },
     python_requires=">=3.8",
     url="https://github.com/cariad/comprehemd",
