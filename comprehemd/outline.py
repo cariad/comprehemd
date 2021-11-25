@@ -16,23 +16,19 @@ class Outline:
         self._root: List[OutlineItem] = []
 
     def __repr__(self) -> str:
-        if not self._root:
-            return f"{self.__class__.__name__}: empty"
+        wip = f"{self.__class__.__name__}("
 
-        wip = ""
+        if self._root:
+            wip += "\n"
+            for item in self._root:
+                wip += self.make_repr(1, item)
 
-        for item in self._root:
-            wip += repr(item) + "\n"
-
-        return wip
+        return wip + ")"
 
     def __str__(self) -> str:
         writer = StringIO()
         self.render(writer)
         return writer.getvalue()
-
-    def add(self, block: HeadingBlock) -> None:
-        self._add(item=OutlineItem(block), to=self._root)
 
     def _add(self, item: OutlineItem, to: List[OutlineItem]) -> None:
         if not to:
@@ -50,15 +46,6 @@ class Outline:
 
         # This is a child of the latest item:
         self._add(item=item, to=to[-1].children)
-
-    def render(self, writer: IO[str], start_level: int = 1, levels: int = 6) -> None:
-        self._render(
-            indent=0,
-            items=self._root,
-            writer=writer,
-            start_level=start_level,
-            remaining_levels=levels,
-        )
 
     def _render(
         self,
@@ -87,6 +74,54 @@ class Outline:
                 writer=writer,
             )
 
+    def add(self, block: HeadingBlock) -> None:
+        """
+        Adds a heading to the outline.
+
+        Arguments:
+            block: Heading to add.
+        """
+
+        self._add(item=OutlineItem(block), to=self._root)
+
+    @staticmethod
+    def make_repr(indent: int, item: OutlineItem) -> str:
+        """
+        Makes a `repr()` string.
+
+        Arguments:
+            indent: Indent.
+            item:   Outline item to represent.
+        """
+
+        indent_str = "  " * indent
+        wip = f"{indent_str}{repr(item.block)}\n"
+        for child in item.children:
+            wip += Outline.make_repr(indent + 1, child)
+        return wip
+
+    def render(self, writer: IO[str], start: int = 1, levels: int = 6) -> None:
+        """
+        Renders the outline to Markdown.
+
+        Arguments:
+            writer: Writer.
+            start:  Highest level to render.
+            levels: Number of levels beneath `start_level` to render.
+        """
+
+        self._render(
+            indent=0,
+            items=self._root,
+            writer=writer,
+            start_level=start,
+            remaining_levels=levels,
+        )
+
     @property
     def root(self) -> List[OutlineItem]:
+        """
+        Gets the root outline items.
+        """
+
         return self._root

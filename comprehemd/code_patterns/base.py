@@ -8,46 +8,62 @@ class CodePattern(ABC):
     Abstract base class for all types of code block.
     """
 
-    ########################################################
-
     def __str__(self) -> str:
         return self.__class__.__name__
 
     def clean(self, line: str) -> str:
-        # line = line.rstrip()
+        """
+        Reveals the content of a line from its markup.
+
+        Arguments:
+            line: Line to clean.
+
+        Returns:
+            Line content.
+        """
 
         if not self.clean_expression:
             return line
 
         if m := match(self.clean_expression, line):
             return m.group(1) if len(m.groups()) > 0 else line
+
         return line
 
     @property
     def clean_expression(self) -> Optional[str]:
-        """Gets the regular expression that cleans a line."""
-        return None
+        """
+        Gets the regular expression that reveals the content of a line from its
+        markup.
+        """
 
-    @property
-    def collapse(self) -> bool:
-        return False
+        return None
 
     @abstractproperty
     def end_expression(self) -> str:
-        """Gets the regular expression that matches the end of this pattern."""
+        """
+        Gets the regular expression that matches the end of this type of block.
+        """
 
     @abstractproperty
-    def start_expression(self) -> str:
-        """Gets the regular expression that matches the start of this pattern."""
-
-    @abstractproperty
-    def is_fenced(self) -> bool:
-        """..."""
+    def fenced(self) -> bool:
+        """
+        Returns `True` if this type of code block has some pattern at the top
+        and bottom of the block to indicate the content boundary.
+        """
 
     def is_end(self, line: str) -> bool:
-        return not not match(self.end_expression, line.rstrip())
+        """
+        Checks if `line` ends code blocks of this type.
 
-    ##############################
+        Arguments:
+            line: Line to check
+
+        Returns:
+            `True` if `line` ends code blocks of this type.
+        """
+
+        return not not match(self.end_expression, line.rstrip())
 
     def is_start(self, line: str) -> Tuple[bool, Optional[str]]:
         """
@@ -57,11 +73,17 @@ class CodePattern(ABC):
             line: Line to check.
 
         Returns:
-            `True` and language (if known) if the line starts a code block of
-            this type, otherwise `False` and `None`.
+            `True` and language if `line` starts a code block of this type.
         """
 
         if m := match(self.start_expression, line):
             lang = m.group(1) if len(m.groups()) > 0 else None
             return True, lang
         return False, None
+
+    @abstractproperty
+    def start_expression(self) -> str:
+        """
+        Gets the regular expression that matches the start of this type of
+        block.
+        """

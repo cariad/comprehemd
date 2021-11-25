@@ -93,6 +93,17 @@ class FooParser(MarkdownParser):
                 )
             ],
         ),
+        # Incomplete fenced block:
+        (
+            [
+                "```yaml\n",
+                "foo: bar",
+            ],
+            [
+                Block("```yaml", source="```yaml\n"),
+                Block("foo: bar", source="foo: bar\n"),
+            ],
+        ),
         # Indented code blocks:
         (
             [

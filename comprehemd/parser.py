@@ -6,6 +6,8 @@ from comprehemd.blocks import Block, CodeBlock, HeadingBlock
 from comprehemd.code_patterns import CodePattern, get_code_pattern
 from comprehemd.outline import Outline
 
+CodeBlockMeta = Tuple[CodeBlock, CodePattern]
+
 
 class MarkdownParser:
     """
@@ -16,7 +18,7 @@ class MarkdownParser:
     """
 
     def __init__(self, outline: bool = False) -> None:
-        self._code_block: Optional[Tuple[CodeBlock, CodePattern]] = None
+        self._code_block: Optional[CodeBlockMeta] = None
         self._line_in_progress = ""
         self._logger = getLogger("comprehemd")
         self._outline = Outline() if outline else None
@@ -25,33 +27,36 @@ class MarkdownParser:
         # okay for a code block to start on the first line of a document:
         self._prev_empty = True
 
-    def _append_code_line(self, line: str) -> None:
-        if not self._code_block:
-            raise Exception("no code block to append to")
+    def _append_code_line(self, block: CodeBlockMeta, line: str) -> None:
         self._logger.debug("Appending code line: %s", line)
-        self._code_block[0].append_text(self._code_block[1].clean(line))
-        self._code_block[0].append_source(line)
+        block[0].append_text(block[1].clean(line))
+        block[0].append_source(line)
 
-    def _close_code_block(self) -> Tuple[CodeBlock, CodePattern]:
-        """
-        Returns the block that was just closed.
-        """
-
+    def _close_code_block(self, clean: bool) -> Optional[CodeBlockMeta]:
         self._logger.debug("Closing code block")
 
         if not self._code_block:
-            raise Exception("no code block to close")
+            return None
+
+        if not clean and self._code_block[1].fenced:
+            lines = self._code_block[0].source.split("\n")
+            del lines[-1]
+            for line in lines:
+                self._handle_block(Block(line, source=line + "\n"))
+            closed = self._code_block
+            self._code_block = None
+            return closed
 
         insert_blanks = (
-            self._code_block[0].trailing_empty_lines
-            if not self._code_block[1].is_fenced
+            self._code_block[0].trailing_new_lines
+            if not self._code_block[1].fenced
             and self._code_block[0].text.endswith("\n")
             else 0
         )
 
         self._code_block[0].collapse_text()
 
-        if self._code_block[1].collapse:
+        if not self._code_block[1].fenced:
             self._code_block[0].collapse_source()
 
         self._handle_code_block(self._code_block[0])
@@ -71,14 +76,14 @@ class MarkdownParser:
 
         block = CodeBlock(
             language=lang,
-            source=line if pattern.is_fenced else "",
+            source=line if pattern.fenced else "",
             text="",
         )
 
         self._code_block = (block, pattern)
 
-        if not pattern.is_fenced:
-            self._append_code_line(line)
+        if not pattern.fenced:
+            self._append_code_line(self._code_block, line)
 
         return True
 
@@ -106,9 +111,8 @@ class MarkdownParser:
         if self._line_in_progress:
             self.feed("\n")
 
-        if self._code_block and not self._code_block[1].is_fenced:
-            self._logger.debug("Closing code block because the parser is closing")
-            self._close_code_block()
+        self._logger.debug("Closing code block because the parser is closing")
+        self._close_code_block(clean=False)
 
     def feed(self, chunk: str) -> None:
         """
@@ -146,18 +150,18 @@ class MarkdownParser:
                     self._logger.debug(
                         'Closing code block because line "%s" indicates the end of the block'
                     )
-                    if self._code_block[1].is_fenced:
+                    if self._code_block[1].fenced:
                         self._code_block[0].append_source(line)
 
-                    closed = self._close_code_block()
-                    if closed[1].is_fenced:
+                    closed = self._close_code_block(clean=True)
+                    if closed and closed[1].fenced:
                         # The line we just read is a fence and should not be
                         # parsed any further.
                         continue
                     # The line we just read is the start of new content and so
                     # should be parsed. Carry on down.
                 else:
-                    self._append_code_line(line)
+                    self._append_code_line(self._code_block, line)
                     continue
 
             elif self._prev_empty:

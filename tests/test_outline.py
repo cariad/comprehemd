@@ -6,6 +6,45 @@ from comprehemd.blocks import HeadingBlock
 from comprehemd.outline import Outline, OutlineItem
 
 
+def test_repr() -> None:
+    outline = Outline()
+    outline.add(HeadingBlock("one a", level=1, source=""))
+    outline.add(HeadingBlock("one b", level=1, source=""))
+    outline.add(HeadingBlock("two a", level=2, source=""))
+    outline.add(HeadingBlock("two b", level=2, source=""))
+    outline.add(HeadingBlock("three a", level=3, source=""))
+    outline.add(HeadingBlock("three b", level=3, source=""))
+    assert (
+        repr(outline)
+        == """Outline(
+  HeadingBlock("one a", level="1", source="")
+  HeadingBlock("one b", level="1", source="")
+    HeadingBlock("two a", level="2", source="")
+    HeadingBlock("two b", level="2", source="")
+      HeadingBlock("three a", level="3", source="")
+      HeadingBlock("three b", level="3", source="")
+)"""
+    )
+
+
+def test_repr__empty() -> None:
+    assert repr(Outline()) == "Outline()"
+
+
+def test_str() -> None:
+    outline = Outline()
+    outline.add(HeadingBlock("one a", level=1, source=""))
+    outline.add(HeadingBlock("one b", level=1, source=""))
+    outline.add(HeadingBlock("two", level=2, source=""))
+    assert (
+        str(outline)
+        == """- [one a](#one-a)
+- [one b](#one-b)
+  - [two](#two)
+"""
+    )
+
+
 def test_add__first() -> None:
     outline = Outline()
     outline.add(HeadingBlock("one", level=1, source=""))
@@ -163,5 +202,5 @@ def test_render__range(start: int, levels: int, expect: str) -> None:
     outline.add(HeadingBlock("six a", level=6, source=""))
     outline.add(HeadingBlock("six b", level=6, source=""))
     writer = StringIO()
-    outline.render(writer, start_level=start, levels=levels)
+    outline.render(writer, start=start, levels=levels)
     assert writer.getvalue() == expect
