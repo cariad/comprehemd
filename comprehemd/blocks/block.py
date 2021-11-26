@@ -100,7 +100,7 @@ class Block:
         Collapses any trailing whitespace in the source to a single new line.
         """
 
-        self._source = self._source.rstrip() + "\n"
+        self._source = self._source.rstrip()
 
     @staticmethod
     def escape(value: str) -> str:

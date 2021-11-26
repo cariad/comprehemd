@@ -56,30 +56,15 @@ class YieldingMarkdownParser:
 
         block.collapse_text()
 
+        if not pattern.fenced:
+            block.collapse_source()
+
         yield block
 
         self._logger.debug("Yielding %s blank(s).", insert_blanks)
 
         for _ in range(insert_blanks):
-            yield Block("")
-
-    def _feed_handle_code_start(self, line: str) -> bool:
-        pattern, lang = get_code_pattern(line)
-        if not pattern:
-            return False
-
-        block = CodeBlock(
-            language=lang,
-            source=line if pattern.fenced else "",
-            text="",
-        )
-
-        self._code = (block, pattern)
-
-        if not pattern.fenced:
-            self._code[0].append(line, self._code[1].clean)
-
-        return True
+            yield EmptyBlock()
 
     def close(self) -> Iterable[Block]:
         """
@@ -92,14 +77,50 @@ class YieldingMarkdownParser:
                 self._logger.debug("Yielding block formed by closing feed: %s", block)
                 yield block
 
-        if not self._code:
-            return
-
-        self._logger.debug("Closing with a code block in progress: %s", self._code)
-
         for block in self._close_code(clean=False):
             self._logger.debug("Yielding block formed by closing code: %s", block)
             yield block
+
+    def _try_parse_for_code(self, line: str) -> Tuple[bool, Optional[Iterable[Block]]]:
+        """
+        returns handled
+        """
+
+        if not self._code:
+            new_pattern, lang = get_code_pattern(line)
+
+            if not new_pattern:
+                # This ain't the start of a code block.
+                return False, None
+
+            if not new_pattern.fenced and not self._prev_empty:
+                # Unfenced blocks start only when the previous line is empty, so
+                # let another handler take care of this line.
+                return False, None
+
+            new_block = CodeBlock(
+                language=lang,
+                source=line,
+                text="" if new_pattern.fenced else new_pattern.clean(line),
+            )
+
+            # We've started a block!
+            self._code = (new_block, new_pattern)
+            return True, None
+
+        block, pattern = self._code
+
+        if pattern.is_end(line):
+            if pattern.fenced:
+                block.append_source(line)
+
+            closed = self._close_code(clean=True)
+            return pattern.fenced, closed
+
+        else:
+            # This isn't the end so just append the line.
+            block.append(line, pattern.clean)
+            return True, None
 
     def parse(self, line: str) -> Iterable[Block]:
         """
@@ -110,36 +131,39 @@ class YieldingMarkdownParser:
 
         self._logger.debug("Parsing line: %s", line.replace("\n", "\\n"))
 
-        if self._code:
-            if self._code[1].is_end(line):
-                fenced = self._code[1].fenced
-                if fenced:
-                    self._code[0].append_source(line)
+        handled, blocks = self._try_parse_for_code(line)
+        if blocks:
+            for block in blocks:
+                yield block
 
-                closed = self._close_code(clean=True)
+        if handled:
+            return
 
-                if closed:
-                    for block in closed:
-                        yield block
+        # if self._code:
+        #     if self._code[1].is_end(line):
+        #         fenced = self._code[1].fenced
+        #         if fenced:
+        #             self._code[0].append_source(line)
 
-                if fenced:
-                    # The line we just read is a fence and should not be parsed
-                    # any further.
-                    return
-            else:
-                # This isn't the end, so append the line:
-                self._code[0].append(line, self._code[1].clean)
-                return
+        #         if closed := self._close_code(clean=True):
+        #             for block in closed:
+        #                 yield block
 
-        elif self._prev_empty:
-            # We'll consider this line a new code block only if the previous
-            # line was empty.
-            if self._feed_handle_code_start(line):
-                return
+        #         if fenced:
+        #             # The line we just read is a fence so we're done.
+        #             return
+        #     else:
+        #         # This isn't the end so just append the line.
+        #         self._code[0].append(line, self._code[1].clean)
+        #         return
 
-        self._prev_empty = line == "\n"
+        # else:
+        #     if self._feed_check_code_start(line):
+        #         return
 
-        if line == "":
+        self._prev_empty = not line
+
+        if not line:
             yield EmptyBlock()
             return
 
