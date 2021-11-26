@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 
 class Block:
@@ -56,7 +56,18 @@ class Block:
     def __str__(self) -> str:
         return f"{self.__class__.__name__}: {self.escaped_text}"
 
-    def append_source(self, source: str) -> None:
+    def append(self, line: str, clean: Callable[[str], str]) -> None:
+        cleaned = clean(line)
+
+        self._logger.debug(
+            'Appending "%s" to text "%s"',
+            self.escape(cleaned),
+            self.escaped_text,
+        )
+        self._text = Block.append_line(self._text, cleaned)
+        self.append_source(line)
+
+    def append_source(self, line: str) -> None:
         """
         Appends `source` to the source value.
 
@@ -66,25 +77,16 @@ class Block:
 
         self._logger.debug(
             'Appending "%s" to source "%s"',
-            self.escape(source),
+            self.escape(line),
             self.escaped_source,
         )
-        self._source += source
+        self._source = Block.append_line(self._source, line)
 
-    def append_text(self, text: str) -> None:
-        """
-        Appends `text` to the text value.
-
-        Arguments:
-            text: Text to append.
-        """
-
-        self._logger.debug(
-            'Appending "%s" to text "%s"',
-            self.escape(text),
-            self.escaped_text,
-        )
-        self._text += text
+    @staticmethod
+    def append_line(root: str, leaf: str) -> str:
+        if not root:
+            return leaf
+        return f"{root}\n{leaf}"
 
     def collapse_text(self) -> None:
         """
@@ -154,5 +156,12 @@ class Block:
 
         for i, c in enumerate(reversed(self.text)):
             if c != "\n":
+                self._logger.debug(
+                    '"%s" has %s trailing space(s)', self.escaped_text, i
+                )
                 return i
+
+        self._logger.debug(
+            '"%s" is entirely (%s) trailing space(s)', self.escaped_text, len(self.text)
+        )
         return len(self.text)

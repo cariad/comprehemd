@@ -43,27 +43,7 @@ with open("docs/example.md", "r") as f:
 <!--edition-exec as=markdown fence=backticks host=shell range=start-->
 
 ```text
-HeadingBlock (1): An Example Document
-Block:
-HeadingBlock (2): Introduction
-Block:
-Block: This is just a short example document.
-Block:
-HeadingBlock (2): Block examples
-Block:
-Block: Here's some backtick-fenced code:
-Block:
-CodeBlock (python): print("Hello, world!")
-Block:
-Block: Here's some tilde-fenced code:
-Block:
-CodeBlock (python): print("Hello, galaxy!")
-Block:
-Block: Here's some indented code:
-Block:
-CodeBlock (<None>): print("Hello, multiverse!")
-Block:
-Block: That's your lot!
+
 ```
 
 <!--edition-exec range=end-->
@@ -90,9 +70,7 @@ with open("docs/example.md", "r") as f:
 <!--edition-exec as=markdown fence=backticks host=shell range=start-->
 
 ```text
-HeadingBlock (1): An Example Document
-HeadingBlock (2): Introduction
-HeadingBlock (2): Block examples
+
 ```
 
 <!--edition-exec range=end-->
@@ -129,9 +107,7 @@ print(parser.outline)
 <!--edition-exec as=markdown fence=backticks host=shell range=start-->
 
 ```text
-- [An Example Document](#an-example-document)
-  - [Introduction](#introduction)
-  - [Block examples](#block-examples)
+
 ```
 
 <!--edition-exec range=end-->
