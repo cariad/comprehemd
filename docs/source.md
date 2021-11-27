@@ -8,20 +8,10 @@ title: CompreheMD
 
 **CompreheMD** is a Python package for parsing Markdown documents.
 
-The parser currently identifies:
-
-- Headings
-- Code blocks
-    - Backtick and tilde fenced, with language
-    - Indented
-
-Everything else is currently recognised as plain text.
-
 <edition value="toc" />
 
-## Quick start
 
-### Installation
+## Installation
 
 CompreheMD requires Python 3.8 or later.
 
@@ -31,96 +21,157 @@ Install CompreheMD via pip:
 pip install comprehemd
 ```
 
-### Example
+## MarkdownParser class
 
-This example simply prints the parsed blocks of an [example document](https://github.com/cariad/comprehemd/blob/main/docs/example.md):
+### Parsing a stream
 
-```python
-from comprehemd import Block, MarkdownParser
+_The Markdown document parsed in this example is [example.md](https://cariad.github.io/comprehemd/example.md)._
 
-class CustomMarkdownParser(MarkdownParser):
-    def handle_block(self, block: Block) -> None:
-        print(block)
-
-with open("docs/example.md", "r") as f:
-    CustomMarkdownParser().read(f)
-```
-
-<!--edition-exec-->
-
-## Usage
-
-### MarkdownParser
-
-When fed chunks of Markdown, the `MarkdownParser` class calls handler functions as and when blocks are recognised.
-
-For example, this code will print only the headings in a document:
-
-```python
-from comprehemd import HeadingBlock, MarkdownParser
-
-class CustomMarkdownParser(MarkdownParser):
-    def handle_heading(self, block: HeadingBlock) -> None:
-        print(block)
-
-with open("docs/example.md", "r") as f:
-    CustomMarkdownParser().read(f)
-```
-
-<!--edition-exec-->
-
-#### Handlers
-
-`handle_block(block: Block)` is called for every parsed block.
-
-`handle_code_block(block: CodeBlock)` is called for every parsed code block.
-
-`handle_heading(block: HeadingBlock)` is called for every parsed heading block.
-
-#### Feeding
-
-To feed a text stream into the parser, call `read(reader: IO[str])`.
-
-To feed in your own ad-hoc chunks, call `feed(chunk: str)`. Each chunk can be as large or small as suits. Call `close()` at the end to ensure buffered work is flushed through.
-
-### Outline
-
-Create the parser with `MarkdownParser(outline=True)` to generate an outline as the document is parsed.
+To read an entire text stream, call `.read(reader: IO[str])`. The method yields [blocks](#blocks-classes) until the stream ends.
 
 ```python
 from comprehemd import MarkdownParser
 
-parser = MarkdownParser(outline=True)
-
-with open("docs/example.md", "r") as f:
-    parser.read(f)
-
-print(parser.outline)
+with open("docs/example.md", "r") as fp:
+    for block in MarkdownParser().read(fp):
+        print(block)
 ```
 
 <!--edition-exec-->
 
-The `Outline` class exposes its items on the `root` property.
+### Parsing chunks
 
-An outline can also be rendered to Markdown via the `render()` method.
+The parser can be fed ad-hoc chunks of Markdown. The `.feed(chunk: str)` method yields all the [blocks](#blocks-classes) that the chunk completed.
 
-### Blocks
+After feeding the final chunk, you must call `.close()` to flush and yield any buffered blocks.
 
-#### Block
+```python
+from comprehemd import CodeBlock, HeadingBlock, MarkdownParser
+
+def tease(chunk: str) -> None:
+    escaped = chunk.replace("\n", "\\n")
+    for block in parser.feed(chunk):
+        print(f'After "{escaped}", the parser yielded:')
+        print(block)
+        print()
+    else:
+        print(f'After "{escaped}", the parser did not yield.')
+        print()
+
+
+parser = MarkdownParser()
+
+tease("# Feeding exam")
+tease("ple\n\nThis de")
+tease("monstrates chu")
+tease("nked feeding.")
+
+for block in parser.close():
+    print("After closing, the parser yielded:")
+    print(block)
+    print()
+
+```
+
+<!--edition-exec-->
+
+## Outline class
+
+### Generating an outline from a stream
+
+_The Markdown document parsed in this example is [example.md](https://cariad.github.io/comprehemd/example.md)._
+
+The `Outline` class keeps track of headings to generate an outline of a Markdown document.
+
+The simplest way to generate an outline is to pass a text stream into the `read_outline()` function:
+
+```python
+from comprehemd import read_outline, OutlineItem
+
+with open("docs/example.md", "r") as fp:
+    outline = read_outline(fp)
+
+def log(indent: int, item: OutlineItem) -> None:
+    indent_str = "  " * indent
+    print(f"{indent_str}{item.block}")
+    for child in item.children:
+        log(indent+1, child)
+
+for item in outline.root:
+    log(0, item)
+```
+
+<!--edition-exec-->
+
+### Generating an outline via a MarkdownParser
+
+_The Markdown document parsed in this example is [example.md](https://cariad.github.io/comprehemd/example.md)._
+
+If you're already parsing a document and would prefer to generate the outline as you go rather than read the document again then you can add headings manually:
+
+```python
+from comprehemd import (
+    HeadingBlock,
+    MarkdownParser,
+    Outline,
+    OutlineItem,
+)
+
+outline = Outline()
+
+with open("docs/example.md", "r") as fp:
+    for block in MarkdownParser().read(fp):
+        if isinstance(block, HeadingBlock):
+            outline.add(block)
+
+def log(indent: int, item: OutlineItem) -> None:
+    indent_str = "  " * indent
+    print(f"{indent_str}{item.block}")
+    for child in item.children:
+        log(indent+1, child)
+
+for item in outline.root:
+    log(0, item)
+```
+
+<!--edition-exec-->
+
+#### Rendering an outline
+
+An outline can be rendered to Markdown by either treating the instance as a string or by calling `.render(writer: IO[str])`.
+
+```python
+from comprehemd import read_outline, OutlineItem
+
+with open("docs/example.md", "r") as fp:
+    outline = read_outline(fp)
+
+print(outline)
+```
+
+<!--edition-exec-->
+
+## Blocks classes
+
+### Block
 
 The `Block` class is the base of all blocks.
 
 - `source` returns the original Markdown source for the block.
 - `text` returns the meaningful text representation of the block.
 
-#### CodeBlock
+### CodeBlock
 
 The `CodeBlock` class represents a code block.
 
-- `language` returns the language hint if one was specified. For example, ````json` describes "json".
-- The block can be rendered to Markdown with any fence type via the `render(writer: IO[str], fence: Fence)` method.
+- `language` returns the language hint if one was specified.
+- The block can be rendered back to Markdown by calling `render(writer: IO[str], fence: Fence)`.
 
-#### HeadingBlock
+### EmptyBlock
+
+`EmptyBlock` represents an empty line.
+
+### HeadingBlock
 
 The `HeadingBlock` class represents a heading.
 
@@ -149,4 +200,5 @@ Please consider supporting my open source projects by [sponsoring me on GitHub](
 
 ### Acknowledgements
 
+- Epic ❤️ to John Gruber for developing [the original Markdown specification](https://daringfireball.net/projects/markdown/).
 - This documentation was pressed by [Edition](https://github.com/cariad/edition).
