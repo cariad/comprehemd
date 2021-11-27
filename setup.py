@@ -16,7 +16,6 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Topic :: Utilities",
     "Typing :: Typed",
 ]
 
@@ -41,10 +40,12 @@ setup(
     name="comprehemd",
     packages=[
         "comprehemd",
+        "comprehemd.blocks",
         "comprehemd.code_patterns",
     ],
     package_data={
         "comprehemd": ["py.typed"],
+        "comprehemd.blocks": ["py.typed"],
         "comprehemd.code_patterns": ["py.typed"],
     },
     python_requires=">=3.8",
