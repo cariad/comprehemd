@@ -1,3 +1,9 @@
+---
+author: Cariad Eccleston
+favicon-emoji: 🤔
+title: CompreheMD
+---
+
 # 🤔 CompreheMD
 
 **CompreheMD** is a Python package for parsing Markdown documents.
@@ -31,33 +37,7 @@ with open("docs/example.md", "r") as fp:
         print(block)
 ```
 
-<!--edition-exec as=markdown fence=backticks host=shell range=start-->
-
-```text
-HeadingBlock (1): An Example Document
-EmptyBlock
-HeadingBlock (2): Introduction
-EmptyBlock
-Block: This is just a short example document.
-EmptyBlock
-HeadingBlock (2): Block examples
-EmptyBlock
-Block: Here's some backtick-fenced code:
-EmptyBlock
-CodeBlock (python): print("Hello, world!")
-EmptyBlock
-Block: Here's some tilde-fenced code:
-EmptyBlock
-CodeBlock (python): print("Hello, galaxy!")
-EmptyBlock
-Block: Here's some indented code:
-EmptyBlock
-CodeBlock (<None>): print("Hello, multiverse!")
-EmptyBlock
-Block: That's your lot!
-```
-
-<!--edition-exec range=end-->
+<!--edition-exec-->
 
 ### Parsing chunks
 
@@ -93,28 +73,7 @@ for block in parser.close():
 
 ```
 
-<!--edition-exec as=markdown fence=backticks host=shell range=start-->
-
-```text
-After "# Feeding exam", the parser did not yield.
-
-After "ple\n\nThis de", the parser yielded:
-HeadingBlock (1): Feeding example
-
-After "ple\n\nThis de", the parser yielded:
-EmptyBlock
-
-After "ple\n\nThis de", the parser did not yield.
-
-After "monstrates chu", the parser did not yield.
-
-After "nked feeding.", the parser did not yield.
-
-After closing, the parser yielded:
-Block: This demonstrates chunked feeding.
-```
-
-<!--edition-exec range=end-->
+<!--edition-exec-->
 
 ## Outline class
 
@@ -142,15 +101,7 @@ for item in outline.root:
     log(0, item)
 ```
 
-<!--edition-exec as=markdown fence=backticks host=shell range=start-->
-
-```text
-HeadingBlock (1): An Example Document
-  HeadingBlock (2): Introduction
-  HeadingBlock (2): Block examples
-```
-
-<!--edition-exec range=end-->
+<!--edition-exec-->
 
 ### Generating an outline via a MarkdownParser
 
@@ -183,15 +134,7 @@ for item in outline.root:
     log(0, item)
 ```
 
-<!--edition-exec as=markdown fence=backticks host=shell range=start-->
-
-```text
-HeadingBlock (1): An Example Document
-  HeadingBlock (2): Introduction
-  HeadingBlock (2): Block examples
-```
-
-<!--edition-exec range=end-->
+<!--edition-exec-->
 
 #### Rendering an outline
 
@@ -206,15 +149,7 @@ with open("docs/example.md", "r") as fp:
 print(outline)
 ```
 
-<!--edition-exec as=markdown fence=backticks host=shell range=start-->
-
-```text
-- [An Example Document](#an-example-document)
-  - [Introduction](#introduction)
-  - [Block examples](#block-examples)
-```
-
-<!--edition-exec range=end-->
+<!--edition-exec-->
 
 ## Blocks classes
 

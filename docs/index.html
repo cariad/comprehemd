@@ -1,0 +1,521 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CompreheMD</title>
+    <meta name="author" content="Cariad Eccleston" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤔</text></svg>" />
+    <style>
+body {
+  /* Thanks! https://systemfontstack.com */
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+}
+
+body {
+  --accent: #f1fa8c; /* Copied from Dracula */
+  --paragraph-spacing: 2rem;
+  --paragraph-spacing-smaller: 0.6rem;
+
+  --regular-margin: 43rem;
+  --grey: #ccc;
+
+  --code-padding: 2rem;
+
+  background-color: var(--white);
+  color: var(--black);
+
+  margin-top: 2rem;
+  margin-bottom: 8rem;
+
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+  font-size: 1.2rem;
+}
+
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ol,
+p,
+ul {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--regular-margin)
+}
+
+article > .highlight,
+article > .thtml {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: calc(var(--regular-margin) - (var(--code-padding)*2));
+}
+
+table {
+  margin-top: var(--paragraph-spacing);
+  margin-left: auto;
+  margin-right: auto;
+  width: var(--regular-margin);
+  max-width: var(--regular-margin);
+}
+
+table td,
+table th {
+  padding-left: 0;
+  padding-right: 1rem;
+  padding-top: 0.4rem;
+}
+
+table td:last-child,
+table th:last-child {
+  padding-right: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+ol,
+ul {
+  margin-top: var(--paragraph-spacing-smaller);
+  margin-bottom: 0;
+
+  max-width: calc(var(--regular-margin) - 2rem);
+}
+
+li {
+  margin-bottom: var(--paragraph-spacing-smaller);
+}
+
+h1 {
+  font-size: 4rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h1, h2, h3, h4, h5, h6, th {
+  border-bottom: 1px solid var(--grey);
+  padding-bottom: 0.3rem;
+}
+
+nav.toc {
+  font-size: 0.8em;
+  letter-spacing: 0.02rem;
+}
+
+nav.toc ol {
+  padding-left: 1rem;
+}
+
+nav.toc li ol {
+  margin-top: 0.1rem;
+}
+
+nav.toc li {
+  list-style: none;
+  margin-bottom: 0.1rem;
+}
+
+p, li, pre {
+  line-height: 1.6;
+}
+
+.thtml {
+  overflow-x: auto;
+}
+
+blockquote {
+  font-style: italic;
+  border-left: 0.6rem solid var(--red);
+  padding-left: 1rem;
+}
+
+a > code,
+h2 > code,
+h3 > code,
+h4 > code,
+h5 > code,
+h6 > code,
+li > code,
+p > code {
+  background: var(--accent);
+  border-radius: 0.3em;
+
+  letter-spacing: 0.04em;
+
+  padding-top: 0.4em;
+  padding-bottom: 0.2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+li > code,
+p > code {
+  font-size: 0.85em;
+}
+
+sup {
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
+}
+
+p {
+  margin-bottom: 0;
+  margin-top: var(--paragraph-spacing);
+}
+
+code, pre {
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
+
+.highlight, .thtml {
+  font-size: 0.8em;
+
+  /* background-color: #1B2A41; */
+  /* color: #fff; */
+
+  padding: var(--code-padding);
+  border-radius: 0.3em;
+
+  margin-top: var(--paragraph-spacing-smaller);
+  margin-bottom: var(--paragraph-spacing);
+
+  box-shadow: 0 0 0.6rem var(--grey)
+}
+
+
+.highlight > pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 0;
+}
+
+body > footer {
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+}
+
+nav > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav > ul > li {
+  display: inline;
+  margin-right: 1rem;
+}
+
+h2+h3,
+h3+h4,
+h4+h5,
+h5+h6 {
+  margin-top: 0;
+}
+
+h2, h3, h4, h5, h6 {
+  margin-bottom: var(--paragraph-spacing);
+  margin-top: calc(var(--paragraph-spacing) * 2);
+}
+
+/* Dracula Theme v1.2.5
+ *
+ * https://github.com/dracula/pygments
+ *
+ * Copyright 2016, All rights reserved
+ *
+ * Code licensed under the MIT license
+ * http://zenorocha.mit-license.org
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Dracula Theme
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Rob G <wowmotty@gmail.com>
+ * @author Chris Bracco <chris@cbracco.me>
+ * @author Zeno Rocha <hi@zenorocha.com>
+ */
+
+ .highlight .hll { background-color: #f1fa8c }
+ .highlight  { background: #282a36; color: #f8f8f2 }
+ .highlight .c { color: #6272a4 } /* Comment */
+ .highlight .err { color: #f8f8f2 } /* Error */
+ .highlight .g { color: #f8f8f2 } /* Generic */
+ .highlight .k { color: #ff79c6 } /* Keyword */
+ .highlight .l { color: #f8f8f2 } /* Literal */
+ .highlight .n { color: #f8f8f2 } /* Name */
+ .highlight .o { color: #ff79c6 } /* Operator */
+ .highlight .x { color: #f8f8f2 } /* Other */
+ .highlight .p { color: #f8f8f2 } /* Punctuation */
+ .highlight .ch { color: #6272a4 } /* Comment.Hashbang */
+ .highlight .cm { color: #6272a4 } /* Comment.Multiline */
+ .highlight .cp { color: #ff79c6 } /* Comment.Preproc */
+ .highlight .cpf { color: #6272a4 } /* Comment.PreprocFile */
+ .highlight .c1 { color: #6272a4 } /* Comment.Single */
+ .highlight .cs { color: #6272a4 } /* Comment.Special */
+ .highlight .gd { color: #8b080b } /* Generic.Deleted */
+ .highlight .ge { color: #f8f8f2; text-decoration: underline } /* Generic.Emph */
+ .highlight .gr { color: #f8f8f2 } /* Generic.Error */
+ .highlight .gh { color: #f8f8f2; font-weight: bold } /* Generic.Heading */
+ .highlight .gi { color: #f8f8f2; font-weight: bold } /* Generic.Inserted */
+ .highlight .go { color: #44475a } /* Generic.Output */
+ .highlight .gp { color: #f8f8f2 } /* Generic.Prompt */
+ .highlight .gs { color: #f8f8f2 } /* Generic.Strong */
+ .highlight .gu { color: #f8f8f2; font-weight: bold } /* Generic.Subheading */
+ .highlight .gt { color: #f8f8f2 } /* Generic.Traceback */
+ .highlight .kc { color: #ff79c6 } /* Keyword.Constant */
+ .highlight .kd { color: #8be9fd; font-style: italic } /* Keyword.Declaration */
+ .highlight .kn { color: #ff79c6 } /* Keyword.Namespace */
+ .highlight .kp { color: #ff79c6 } /* Keyword.Pseudo */
+ .highlight .kr { color: #ff79c6 } /* Keyword.Reserved */
+ .highlight .kt { color: #8be9fd } /* Keyword.Type */
+ .highlight .ld { color: #f8f8f2 } /* Literal.Date */
+ .highlight .m { color: #bd93f9 } /* Literal.Number */
+ .highlight .s { color: #f1fa8c } /* Literal.String */
+ .highlight .na { color: #50fa7b } /* Name.Attribute */
+ .highlight .nb { color: #8be9fd; font-style: italic } /* Name.Builtin */
+ .highlight .nc { color: #50fa7b } /* Name.Class */
+ .highlight .no { color: #f8f8f2 } /* Name.Constant */
+ .highlight .nd { color: #f8f8f2 } /* Name.Decorator */
+ .highlight .ni { color: #f8f8f2 } /* Name.Entity */
+ .highlight .ne { color: #f8f8f2 } /* Name.Exception */
+ .highlight .nf { color: #50fa7b } /* Name.Function */
+ .highlight .nl { color: #8be9fd; font-style: italic } /* Name.Label */
+ .highlight .nn { color: #f8f8f2 } /* Name.Namespace */
+ .highlight .nx { color: #f8f8f2 } /* Name.Other */
+ .highlight .py { color: #f8f8f2 } /* Name.Property */
+ .highlight .nt { color: #ff79c6 } /* Name.Tag */
+ .highlight .nv { color: #8be9fd; font-style: italic } /* Name.Variable */
+ .highlight .ow { color: #ff79c6 } /* Operator.Word */
+ .highlight .w { color: #f8f8f2 } /* Text.Whitespace */
+ .highlight .mb { color: #bd93f9 } /* Literal.Number.Bin */
+ .highlight .mf { color: #bd93f9 } /* Literal.Number.Float */
+ .highlight .mh { color: #bd93f9 } /* Literal.Number.Hex */
+ .highlight .mi { color: #bd93f9 } /* Literal.Number.Integer */
+ .highlight .mo { color: #bd93f9 } /* Literal.Number.Oct */
+ .highlight .sa { color: #f1fa8c } /* Literal.String.Affix */
+ .highlight .sb { color: #f1fa8c } /* Literal.String.Backtick */
+ .highlight .sc { color: #f1fa8c } /* Literal.String.Char */
+ .highlight .dl { color: #f1fa8c } /* Literal.String.Delimiter */
+ .highlight .sd { color: #f1fa8c } /* Literal.String.Doc */
+ .highlight .s2 { color: #f1fa8c } /* Literal.String.Double */
+ .highlight .se { color: #f1fa8c } /* Literal.String.Escape */
+ .highlight .sh { color: #f1fa8c } /* Literal.String.Heredoc */
+ .highlight .si { color: #f1fa8c } /* Literal.String.Interpol */
+ .highlight .sx { color: #f1fa8c } /* Literal.String.Other */
+ .highlight .sr { color: #f1fa8c } /* Literal.String.Regex */
+ .highlight .s1 { color: #f1fa8c } /* Literal.String.Single */
+ .highlight .ss { color: #f1fa8c } /* Literal.String.Symbol */
+ .highlight .bp { color: #f8f8f2; font-style: italic } /* Name.Builtin.Pseudo */
+ .highlight .fm { color: #50fa7b } /* Name.Function.Magic */
+ .highlight .vc { color: #8be9fd; font-style: italic } /* Name.Variable.Class */
+ .highlight .vg { color: #8be9fd; font-style: italic } /* Name.Variable.Global */
+ .highlight .vi { color: #8be9fd; font-style: italic } /* Name.Variable.Instance */
+ .highlight .vm { color: #8be9fd; font-style: italic } /* Name.Variable.Magic */
+ .highlight .il { color: #bd93f9 } /* Literal.Number.Integer.Long */
+</style>
+  </head>
+
+  <body>
+    <article>
+        <h1>🤔 CompreheMD</h1>
+<p><strong>CompreheMD</strong> is a Python package for parsing Markdown documents.</p>
+<p><nav class="toc"><ol><li><a href="#installation">Installation</a></li><li><a href="#markdownparser-class">MarkdownParser class</a><ol><li><a href="#parsing-a-stream">Parsing a stream</a></li><li><a href="#parsing-chunks">Parsing chunks</a></li></ol></li><li><a href="#outline-class">Outline class</a><ol><li><a href="#generating-an-outline-from-a-stream">Generating an outline from a stream</a></li><li><a href="#generating-an-outline-via-a-markdownparser">Generating an outline via a MarkdownParser</a></li></ol></li><li><a href="#blocks-classes">Blocks classes</a><ol><li><a href="#block">Block</a></li><li><a href="#codeblock">CodeBlock</a></li><li><a href="#emptyblock">EmptyBlock</a></li><li><a href="#headingblock">HeadingBlock</a></li></ol></li><li><a href="#project">Project</a><ol><li><a href="#contributing">Contributing</a></li><li><a href="#licence">Licence</a></li><li><a href="#author">Author</a></li><li><a href="#acknowledgements">Acknowledgements</a></li></ol></li></ol></nav></p>
+<h2>Installation<a id="installation"></a></h2>
+<p>CompreheMD requires Python 3.8 or later.</p>
+<p>Install CompreheMD via pip:</p>
+<div class="highlight"><pre><span></span>pip install comprehemd
+</pre></div>
+
+<h2>MarkdownParser class<a id="markdownparser-class"></a></h2>
+<h3>Parsing a stream<a id="parsing-a-stream"></a></h3>
+<p><em>The Markdown document parsed in this example is <a href="https://cariad.github.io/comprehemd/example.md">example.md</a>.</em></p>
+<p>To read an entire text stream, call <code>.read(reader: IO[str])</code>. The method yields <a href="#blocks-classes">blocks</a> until the stream ends.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">MarkdownParser</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">MarkdownParser</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />EmptyBlock<br />HeadingBlock (2): Introduction<br />EmptyBlock<br />Block: This is just a short example document.<br />EmptyBlock<br />HeadingBlock (2): Block examples<br />EmptyBlock<br />Block: Here's some backtick-fenced code:<br />EmptyBlock<br />CodeBlock (python): print("Hello, world!")<br />EmptyBlock<br />Block: Here's some tilde-fenced code:<br />EmptyBlock<br />CodeBlock (python): print("Hello, galaxy!")<br />EmptyBlock<br />Block: Here's some indented code:<br />EmptyBlock<br />CodeBlock (<none>): print("Hello, multiverse!")<br />EmptyBlock<br />Block: That's your lot!<br /></code></pre>
+
+
+
+<h3>Parsing chunks<a id="parsing-chunks"></a></h3>
+<p>The parser can be fed ad-hoc chunks of Markdown. The <code>.feed(chunk: str)</code> method yields all the <a href="#blocks-classes">blocks</a> that the chunk completed.</p>
+<p>After feeding the final chunk, you must call <code>.close()</code> to flush and yield any buffered blocks.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">CodeBlock</span><span class="p">,</span> <span class="n">HeadingBlock</span><span class="p">,</span> <span class="n">MarkdownParser</span>
+
+<span class="k">def</span> <span class="nf">tease</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">escaped</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\\</span><span class="s2">n"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">chunk</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'After "</span><span class="si">{</span><span class="n">escaped</span><span class="si">}</span><span class="s1">", the parser yielded:'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'After "</span><span class="si">{</span><span class="n">escaped</span><span class="si">}</span><span class="s1">", the parser did not yield.'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownParser</span><span class="p">()</span>
+
+<span class="n">tease</span><span class="p">(</span><span class="s2">"# Feeding exam"</span><span class="p">)</span>
+<span class="n">tease</span><span class="p">(</span><span class="s2">"ple</span><span class="se">\n\n</span><span class="s2">This de"</span><span class="p">)</span>
+<span class="n">tease</span><span class="p">(</span><span class="s2">"monstrates chu"</span><span class="p">)</span>
+<span class="n">tease</span><span class="p">(</span><span class="s2">"nked feeding."</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"After closing, the parser yielded:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">After "# Feeding exam", the parser did not yield.<br /><br />After "ple\n\nThis de", the parser yielded:<br />HeadingBlock (1): Feeding example<br /><br />After "ple\n\nThis de", the parser yielded:<br />EmptyBlock<br /><br />After "ple\n\nThis de", the parser did not yield.<br /><br />After "monstrates chu", the parser did not yield.<br /><br />After "nked feeding.", the parser did not yield.<br /><br />After closing, the parser yielded:<br />Block: This demonstrates chunked feeding.<br /></code></pre>
+
+
+
+<h2>Outline class<a id="outline-class"></a></h2>
+<h3>Generating an outline from a stream<a id="generating-an-outline-from-a-stream"></a></h3>
+<p><em>The Markdown document parsed in this example is <a href="https://cariad.github.io/comprehemd/example.md">example.md</a>.</em></p>
+<p>The <code>Outline</code> class keeps track of headings to generate an outline of a Markdown document.</p>
+<p>The simplest way to generate an outline is to pass a text stream into the <code>read_outline()</code> function:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">read_outline</span><span class="p">,</span> <span class="n">OutlineItem</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">outline</span> <span class="o">=</span> <span class="n">read_outline</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">indent</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">OutlineItem</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">indent_str</span> <span class="o">=</span> <span class="s2">"  "</span> <span class="o">*</span> <span class="n">indent</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent_str</span><span class="si">}{</span><span class="n">item</span><span class="o">.</span><span class="n">block</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">log</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">outline</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
+    <span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />  HeadingBlock (2): Introduction<br />  HeadingBlock (2): Block examples<br /></code></pre>
+
+
+
+<h3>Generating an outline via a MarkdownParser<a id="generating-an-outline-via-a-markdownparser"></a></h3>
+<p><em>The Markdown document parsed in this example is <a href="https://cariad.github.io/comprehemd/example.md">example.md</a>.</em></p>
+<p>If you're already parsing a document and would prefer to generate the outline as you go rather than read the document again then you can add headings manually:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HeadingBlock</span><span class="p">,</span>
+    <span class="n">MarkdownParser</span><span class="p">,</span>
+    <span class="n">Outline</span><span class="p">,</span>
+    <span class="n">OutlineItem</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">outline</span> <span class="o">=</span> <span class="n">Outline</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">MarkdownParser</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">HeadingBlock</span><span class="p">):</span>
+            <span class="n">outline</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">indent</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">OutlineItem</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">indent_str</span> <span class="o">=</span> <span class="s2">"  "</span> <span class="o">*</span> <span class="n">indent</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent_str</span><span class="si">}{</span><span class="n">item</span><span class="o">.</span><span class="n">block</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">log</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">outline</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
+    <span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />  HeadingBlock (2): Introduction<br />  HeadingBlock (2): Block examples<br /></code></pre>
+
+
+
+<h4>Rendering an outline<a id="rendering-an-outline"></a></h4>
+<p>An outline can be rendered to Markdown by either treating the instance as a string or by calling <code>.render(writer: IO[str])</code>.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">read_outline</span><span class="p">,</span> <span class="n">OutlineItem</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">outline</span> <span class="o">=</span> <span class="n">read_outline</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">outline</span><span class="p">)</span>
+</pre></div>
+
+
+
+<pre class="nohighlight thtml"><code class="thtml-code">- [An Example Document](#an-example-document)<br />  - [Introduction](#introduction)<br />  - [Block examples](#block-examples)<br /></code></pre>
+
+
+
+<h2>Blocks classes<a id="blocks-classes"></a></h2>
+<h3>Block<a id="block"></a></h3>
+<p>The <code>Block</code> class is the base of all blocks.</p>
+<ul>
+<li><code>source</code> returns the original Markdown source for the block.</li>
+<li><code>text</code> returns the meaningful text representation of the block.</li>
+</ul>
+<h3>CodeBlock<a id="codeblock"></a></h3>
+<p>The <code>CodeBlock</code> class represents a code block.</p>
+<ul>
+<li><code>language</code> returns the language hint if one was specified.</li>
+<li>The block can be rendered back to Markdown by calling <code>render(writer: IO[str], fence: Fence)</code>.</li>
+</ul>
+<h3>EmptyBlock<a id="emptyblock"></a></h3>
+<p><code>EmptyBlock</code> represents an empty line.</p>
+<h3>HeadingBlock<a id="headingblock"></a></h3>
+<p>The <code>HeadingBlock</code> class represents a heading.</p>
+<ul>
+<li><code>anchor</code> returns the heading's anchor.</li>
+<li><code>level</code> returns the heading's level (i.e. 1 for the top-most heading, down to 6 for the lowest).</li>
+</ul>
+<h2>Project<a id="project"></a></h2>
+<h3>Contributing<a id="contributing"></a></h3>
+<p>To contribute a bug report, enhancement or feature request, please raise an issue at <a href="https://github.com/cariad/comprehemd/issues">github.com/cariad/comprehemd/issues</a>.</p>
+<p>If you want to contribute a code change, please raise an issue first so we can chat about the direction you want to take.</p>
+<h3>Licence<a id="licence"></a></h3>
+<p>CompreheMD is released at <a href="https://github.com/cariad/comprehemd">github.com/cariad/comprehemd</a> under the MIT Licence.</p>
+<p>See <a href="https://github.com/cariad/comprehemd/blob/main/LICENSE">LICENSE</a> for more information.</p>
+<h3>Author<a id="author"></a></h3>
+<p>Hello! 👋 I'm <strong>Cariad Eccleston</strong> and I'm a freelance DevOps and backend engineer. My contact details are available on my personal wiki at <a href="https://cariad.earth">cariad.earth</a>.</p>
+<p>Please consider supporting my open source projects by <a href="https://github.com/sponsors/cariad/">sponsoring me on GitHub</a>.</p>
+<h3>Acknowledgements<a id="acknowledgements"></a></h3>
+<ul>
+<li>Epic ❤️ to John Gruber for developing <a href="https://daringfireball.net/projects/markdown/">the original Markdown specification</a>.</li>
+<li>This documentation was pressed by <a href="https://github.com/cariad/edition">Edition</a>.</li>
+</ul>
+    </article>
+  </body>
+
+</html>

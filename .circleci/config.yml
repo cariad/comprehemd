@@ -1,0 +1,210 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@3.0.0
+
+jobs:
+  black:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-black.sh
+      - save_cache:
+          key: pipenv-{{ checksum "Pipfile.lock" }}
+          paths:
+            - .venv
+
+  flake8:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-flake8.sh
+
+  isort:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-isort.sh
+
+  package_types:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - restore_cache:
+          keys:
+            - mypy-package-{{ .Branch }}
+            - mypy-package-main
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-package-types.sh
+      - save_cache:
+          key: mypy-package-{{ .Branch }}
+          paths:
+            - .mypy_cache
+
+  shell:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-shell.sh
+
+  test_types:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - restore_cache:
+          keys:
+            - mypy-test-{{ .Branch }}
+            - mypy-test-main
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-test-types.sh
+      - save_cache:
+          key: mypy-test-{{ .Branch }}
+          paths:
+            - .mypy_cache
+
+  yaml:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run ./scripts/lint-yaml.sh
+
+  test:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run test
+      - codecov/upload:
+          file: coverage.xml
+
+  build:
+    docker:
+      - image: cimg/python:3.10.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pipenv-{{ checksum "Pipfile.lock" }}
+            - pipenv-
+      - run: pipenv sync --dev
+      - run: pipenv run build
+      - run: pip install dist/*
+      - run: if [[ -z "${CIRCLE_TAG}" ]]; then circleci-agent step halt; fi
+      - run: pipenv run twine upload dist/*
+
+workflows:
+  default:
+    jobs:
+      - black:
+          context:
+            - python
+
+      - flake8:
+          context:
+            - python
+
+      - isort:
+          context:
+            - python
+
+      - package_types:
+          context:
+            - python
+
+      - shell:
+          context:
+            - python
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+
+      - test_types:
+          context:
+            - python
+
+      - yaml:
+          context:
+            - python
+
+      - test:
+          context:
+            - python
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+
+      - build:
+          context:
+            - python
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+          requires:
+            - black
+            - flake8
+            - isort
+            - package_types
+            - shell
+            - test_types
+            - yaml
+            - test
