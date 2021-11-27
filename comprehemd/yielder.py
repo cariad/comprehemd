@@ -5,24 +5,20 @@ from typing import IO, Iterable, Optional, Tuple
 from comprehemd.blocks import Block, CodeBlock, HeadingBlock
 from comprehemd.blocks.empty import EmptyBlock
 from comprehemd.code_patterns import CodePattern, get_code_pattern
-from comprehemd.outline import Outline
 
 CodeBlockMeta = Tuple[CodeBlock, CodePattern]
+TryParseResult = Tuple[bool, Optional[Iterable[Block]]]
 
 
 class YieldingMarkdownParser:
     """
     Markdown parser.
-
-    Arguments:
-        outline: Generate an outline.
     """
 
-    def __init__(self, outline: bool = False) -> None:
+    def __init__(self) -> None:
         self._code: Optional[CodeBlockMeta] = None
         self._line = ""
         self._logger = getLogger("comprehemd")
-        self._outline = Outline() if outline else None
 
         # We claim that the previous-to-starting line was empty because it's
         # okay for a code block to start on the first line of a document:
@@ -81,9 +77,12 @@ class YieldingMarkdownParser:
             self._logger.debug("Yielding block formed by closing code: %s", block)
             yield block
 
-    def _try_parse_for_code(self, line: str) -> Tuple[bool, Optional[Iterable[Block]]]:
+    def _try_parse_for_code(self, line: str) -> TryParseResult:
         """
-        returns handled
+        Attempts to parse `line` as an element of a code block.
+
+        Returns:
+            Flag to indicate if the line was handled and any blocks to yield.
         """
 
         if not self._code:
@@ -122,63 +121,27 @@ class YieldingMarkdownParser:
             block.append(line, pattern.clean)
             return True, None
 
-    def parse(self, line: str) -> Iterable[Block]:
+    def _try_parse_for_heading(self, line: str) -> TryParseResult:
         """
-        Parses a complete line.
+        Attempts to parse `line` as a heading.
+
+        Returns:
+            Flag to indicate if the line was handled and any blocks to yield.
         """
-
-        line = line.rstrip()
-
-        self._logger.debug("Parsing line: %s", line.replace("\n", "\\n"))
-
-        handled, blocks = self._try_parse_for_code(line)
-        if blocks:
-            for block in blocks:
-                yield block
-
-        if handled:
-            return
-
-        # if self._code:
-        #     if self._code[1].is_end(line):
-        #         fenced = self._code[1].fenced
-        #         if fenced:
-        #             self._code[0].append_source(line)
-
-        #         if closed := self._close_code(clean=True):
-        #             for block in closed:
-        #                 yield block
-
-        #         if fenced:
-        #             # The line we just read is a fence so we're done.
-        #             return
-        #     else:
-        #         # This isn't the end so just append the line.
-        #         self._code[0].append(line, self._code[1].clean)
-        #         return
-
-        # else:
-        #     if self._feed_check_code_start(line):
-        #         return
-
-        self._prev_empty = not line
-
-        if not line:
-            yield EmptyBlock()
-            return
 
         heading_match = match(r"^(#{1,6})[\s]+(.*)$", line)
-        if heading_match:
-            self._logger.debug("heading_match: %s", heading_match)
-            heading = HeadingBlock(
-                level=len(heading_match.group(1)),
-                text=heading_match.group(2),
-                source=line,
-            )
-            yield heading
-            return
+        if not heading_match:
+            return False, None
 
-        yield Block(text=line.rstrip(), source=line)
+        self._logger.debug("heading_match: %s", heading_match)
+
+        block = HeadingBlock(
+            level=len(heading_match.group(1)),
+            text=heading_match.group(2),
+            source=line,
+        )
+
+        return True, [block]
 
     def feed(self, chunk: str) -> Iterable[Block]:
         """
@@ -210,6 +173,43 @@ class YieldingMarkdownParser:
         for line in lines:
             for block in self.parse(line):
                 yield block
+
+    def parse(self, line: str) -> Iterable[Block]:
+        """
+        Parses a complete line.
+        """
+
+        line = line.rstrip()
+
+        self._logger.debug("Parsing line: %s", line.replace("\n", "\\n"))
+
+        handled, blocks = self._try_parse_for_code(line)
+
+        if blocks:
+            for block in blocks:
+                yield block
+
+        # "_prev_empty" is only read by "_try_parse_for_code" so it's okay to
+        # reset it now.
+        self._prev_empty = not line
+
+        if handled:
+            return
+
+        if not line:
+            yield EmptyBlock()
+            return
+
+        handled, blocks = self._try_parse_for_heading(line)
+
+        if blocks:
+            for block in blocks:
+                yield block
+
+        if handled:
+            return
+
+        yield Block(text=line.rstrip(), source=line)
 
     def read(self, reader: IO[str]) -> Iterable[Block]:
         """

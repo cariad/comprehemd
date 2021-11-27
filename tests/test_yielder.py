@@ -263,3 +263,20 @@ def test_close_when_already_complete() -> None:
     reader = StringIO("foo\n")
     y = YieldingMarkdownParser()
     assert list(y.read(reader)) == [Block("foo")]
+
+
+# def test_outline() -> None:
+#     getLogger("comprehemd").debug("lkjlkjlkjlkjlkkljkl")
+#     parser = YieldingMarkdownParser(outline=True)
+#     parser.feed("# Title\n## Heading\n")
+#     parser.close()
+#     assert len(parser.outline.root) == 1
+#     assert parser.outline.root[0].block.text == "Title"
+#     assert len(parser.outline.root[0].children) == 1
+#     assert parser.outline.root[0].children[0].block.text == "Heading"
+
+
+# def test_outline__none() -> None:
+#     parser = MarkdownParser()
+#     with raises(ValueError):
+#         parser.outline

@@ -75,13 +75,6 @@ class Outline:
             )
 
     def add(self, block: HeadingBlock) -> None:
-        """
-        Adds a heading to the outline.
-
-        Arguments:
-            block: Heading to add.
-        """
-
         self._add(item=OutlineItem(block), to=self._root)
 
     @staticmethod
