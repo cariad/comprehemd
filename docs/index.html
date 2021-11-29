@@ -345,7 +345,7 @@ h2, h3, h4, h5, h6 {
     <article>
         <h1>🤔 CompreheMD</h1>
 <p><strong>CompreheMD</strong> is a Python package for parsing Markdown documents.</p>
-<p><nav class="toc"><ol><li><a href="#installation">Installation</a></li><li><a href="#markdownparser-class">MarkdownParser class</a><ol><li><a href="#parsing-a-stream">Parsing a stream</a></li><li><a href="#parsing-chunks">Parsing chunks</a></li></ol></li><li><a href="#outline-class">Outline class</a><ol><li><a href="#generating-an-outline-from-a-stream">Generating an outline from a stream</a></li><li><a href="#generating-an-outline-via-a-markdownparser">Generating an outline via a MarkdownParser</a></li></ol></li><li><a href="#blocks-classes">Blocks classes</a><ol><li><a href="#block">Block</a></li><li><a href="#codeblock">CodeBlock</a></li><li><a href="#emptyblock">EmptyBlock</a></li><li><a href="#headingblock">HeadingBlock</a></li></ol></li><li><a href="#project">Project</a><ol><li><a href="#contributing">Contributing</a></li><li><a href="#licence">Licence</a></li><li><a href="#author">Author</a></li><li><a href="#acknowledgements">Acknowledgements</a></li></ol></li></ol></nav></p>
+<p><nav class="toc"><ol><li><a href="#installation">Installation</a></li><li><a href="#markdownparser-class">MarkdownParser class</a><ol><li><a href="#parsing-a-stream">Parsing a stream</a></li><li><a href="#parsing-chunks">Parsing chunks</a></li></ol></li><li><a href="#blocks-classes">Blocks classes</a><ol><li><a href="#block">Block</a></li><li><a href="#codeblock">CodeBlock</a></li><li><a href="#emptyblock">EmptyBlock</a></li><li><a href="#headingblock">HeadingBlock</a></li></ol></li><li><a href="#project">Project</a><ol><li><a href="#contributing">Contributing</a></li><li><a href="#licence">Licence</a></li><li><a href="#author">Author</a></li><li><a href="#acknowledgements">Acknowledgements</a></li></ol></li></ol></nav></p>
 <h2>Installation<a id="installation"></a></h2>
 <p>CompreheMD requires Python 3.8 or later.</p>
 <p>Install CompreheMD via pip:</p>
@@ -401,81 +401,6 @@ h2, h3, h4, h5, h6 {
 
 
 <pre class="nohighlight thtml"><code class="thtml-code">After "# Feeding exam", the parser did not yield.<br /><br />After "ple\n\nThis de", the parser yielded:<br />HeadingBlock (1): Feeding example<br /><br />After "ple\n\nThis de", the parser yielded:<br />EmptyBlock<br /><br />After "ple\n\nThis de", the parser did not yield.<br /><br />After "monstrates chu", the parser did not yield.<br /><br />After "nked feeding.", the parser did not yield.<br /><br />After closing, the parser yielded:<br />Block: This demonstrates chunked feeding.<br /></code></pre>
-
-
-
-<h2>Outline class<a id="outline-class"></a></h2>
-<h3>Generating an outline from a stream<a id="generating-an-outline-from-a-stream"></a></h3>
-<p><em>The Markdown document parsed in this example is <a href="https://cariad.github.io/comprehemd/example.md">example.md</a>.</em></p>
-<p>The <code>Outline</code> class keeps track of headings to generate an outline of a Markdown document.</p>
-<p>The simplest way to generate an outline is to pass a text stream into the <code>read_outline()</code> function:</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">read_outline</span><span class="p">,</span> <span class="n">OutlineItem</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-    <span class="n">outline</span> <span class="o">=</span> <span class="n">read_outline</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">indent</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">OutlineItem</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">indent_str</span> <span class="o">=</span> <span class="s2">"  "</span> <span class="o">*</span> <span class="n">indent</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent_str</span><span class="si">}{</span><span class="n">item</span><span class="o">.</span><span class="n">block</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-        <span class="n">log</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">outline</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
-    <span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-</pre></div>
-
-
-
-<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />  HeadingBlock (2): Introduction<br />  HeadingBlock (2): Block examples<br /></code></pre>
-
-
-
-<h3>Generating an outline via a MarkdownParser<a id="generating-an-outline-via-a-markdownparser"></a></h3>
-<p><em>The Markdown document parsed in this example is <a href="https://cariad.github.io/comprehemd/example.md">example.md</a>.</em></p>
-<p>If you're already parsing a document and would prefer to generate the outline as you go rather than read the document again then you can add headings manually:</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">HeadingBlock</span><span class="p">,</span>
-    <span class="n">MarkdownParser</span><span class="p">,</span>
-    <span class="n">Outline</span><span class="p">,</span>
-    <span class="n">OutlineItem</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">outline</span> <span class="o">=</span> <span class="n">Outline</span><span class="p">()</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">MarkdownParser</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">HeadingBlock</span><span class="p">):</span>
-            <span class="n">outline</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">indent</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">OutlineItem</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">indent_str</span> <span class="o">=</span> <span class="s2">"  "</span> <span class="o">*</span> <span class="n">indent</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent_str</span><span class="si">}{</span><span class="n">item</span><span class="o">.</span><span class="n">block</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-        <span class="n">log</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">outline</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
-    <span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-</pre></div>
-
-
-
-<pre class="nohighlight thtml"><code class="thtml-code">HeadingBlock (1): An Example Document<br />  HeadingBlock (2): Introduction<br />  HeadingBlock (2): Block examples<br /></code></pre>
-
-
-
-<h4>Rendering an outline<a id="rendering-an-outline"></a></h4>
-<p>An outline can be rendered to Markdown by either treating the instance as a string or by calling <code>.render(writer: IO[str])</code>.</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">read_outline</span><span class="p">,</span> <span class="n">OutlineItem</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-    <span class="n">outline</span> <span class="o">=</span> <span class="n">read_outline</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">outline</span><span class="p">)</span>
-</pre></div>
-
-
-
-<pre class="nohighlight thtml"><code class="thtml-code">- [An Example Document](#an-example-document)<br />  - [Introduction](#introduction)<br />  - [Block examples](#block-examples)<br /></code></pre>
 
 
 
