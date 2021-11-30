@@ -142,7 +142,7 @@ The `Block` class is the base of all blocks.
 The `CodeBlock` class represents a code block.
 
 - `language` returns the language hint if one was specified.
-- The block can be rendered back to Markdown by calling `render(writer: IO[str], fence: Fence)`.
+- The block can be rendered back to Markdown by calling `render()`.
 
 ### EmptyBlock
 
