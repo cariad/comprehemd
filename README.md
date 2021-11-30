@@ -140,7 +140,6 @@ The `CodeBlock` class represents a code block.
 
 The `HeadingBlock` class represents a heading.
 
-- `anchor` returns the heading's anchor.
 - `level` returns the heading's level (i.e. 1 for the top-most heading, down to 6 for the lowest).
 
 ## Project
