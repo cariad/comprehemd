@@ -2,8 +2,20 @@
 
 **CompreheMD** is a Python package for parsing Markdown documents.
 
-<edition value="toc" />
-
+- [Installation](#installation)
+- [MarkdownParser class](#markdownparser-class)
+  - [Parsing a stream](#parsing-a-stream)
+  - [Parsing chunks](#parsing-chunks)
+- [Blocks classes](#blocks-classes)
+  - [Block](#block)
+  - [CodeBlock](#codeblock)
+  - [EmptyBlock](#emptyblock)
+  - [HeadingBlock](#headingblock)
+- [Project](#project)
+  - [Contributing](#contributing)
+  - [Licence](#licence)
+  - [Author](#author)
+  - [Acknowledgements](#acknowledgements)
 
 ## Installation
 
@@ -21,7 +33,7 @@ pip install comprehemd
 
 _The Markdown document parsed in this example is [example.md](https://cariad.github.io/comprehemd/example.md)._
 
-To read an entire text stream, call `.read(reader: IO[str])`. The method yields [blocks](#blocks-classes) until the stream ends.
+To read an entire text stream, call `read()`. The method yields [blocks](#blocks-classes) until the stream ends.
 
 ```python
 from comprehemd import MarkdownParser
@@ -61,9 +73,9 @@ Block: That's your lot!
 
 ### Parsing chunks
 
-The parser can be fed ad-hoc chunks of Markdown. The `.feed(chunk: str)` method yields all the [blocks](#blocks-classes) that the chunk completed.
+The parser can be fed ad-hoc chunks of Markdown. The `feed()` method yields all the [blocks](#blocks-classes) that the chunk completed.
 
-After feeding the final chunk, you must call `.close()` to flush and yield any buffered blocks.
+After feeding the final chunk, you must call `close()` to flush and yield any buffered blocks.
 
 ```python
 from comprehemd import CodeBlock, HeadingBlock, MarkdownParser
@@ -130,7 +142,7 @@ The `Block` class is the base of all blocks.
 The `CodeBlock` class represents a code block.
 
 - `language` returns the language hint if one was specified.
-- The block can be rendered back to Markdown by calling `render(writer: IO[str], fence: Fence)`.
+- The block can be rendered back to Markdown by calling `render()`.
 
 ### EmptyBlock
 

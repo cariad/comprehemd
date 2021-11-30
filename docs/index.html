@@ -41,6 +41,7 @@ h3,
 h4,
 h5,
 h6,
+img,
 ol,
 p,
 ul {
@@ -137,6 +138,18 @@ blockquote {
   padding-left: 1rem;
 }
 
+img,
+a > code,
+h2 > code,
+h3 > code,
+h4 > code,
+h5 > code,
+h6 > code,
+li > code,
+p > code {
+  border-radius: 0.3em;
+}
+
 a > code,
 h2 > code,
 h3 > code,
@@ -146,7 +159,6 @@ h6 > code,
 li > code,
 p > code {
   background: var(--accent);
-  border-radius: 0.3em;
 
   letter-spacing: 0.04em;
 
@@ -355,7 +367,7 @@ h2, h3, h4, h5, h6 {
 <h2>MarkdownParser class<a id="markdownparser-class"></a></h2>
 <h3>Parsing a stream<a id="parsing-a-stream"></a></h3>
 <p><em>The Markdown document parsed in this example is <a href="https://cariad.github.io/comprehemd/example.md">example.md</a>.</em></p>
-<p>To read an entire text stream, call <code>.read(reader: IO[str])</code>. The method yields <a href="#blocks-classes">blocks</a> until the stream ends.</p>
+<p>To read an entire text stream, call <code>read()</code>. The method yields <a href="#blocks-classes">blocks</a> until the stream ends.</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">MarkdownParser</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/example.md"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
@@ -370,8 +382,8 @@ h2, h3, h4, h5, h6 {
 
 
 <h3>Parsing chunks<a id="parsing-chunks"></a></h3>
-<p>The parser can be fed ad-hoc chunks of Markdown. The <code>.feed(chunk: str)</code> method yields all the <a href="#blocks-classes">blocks</a> that the chunk completed.</p>
-<p>After feeding the final chunk, you must call <code>.close()</code> to flush and yield any buffered blocks.</p>
+<p>The parser can be fed ad-hoc chunks of Markdown. The <code>feed()</code> method yields all the <a href="#blocks-classes">blocks</a> that the chunk completed.</p>
+<p>After feeding the final chunk, you must call <code>close()</code> to flush and yield any buffered blocks.</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">comprehemd</span> <span class="kn">import</span> <span class="n">CodeBlock</span><span class="p">,</span> <span class="n">HeadingBlock</span><span class="p">,</span> <span class="n">MarkdownParser</span>
 
 <span class="k">def</span> <span class="nf">tease</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-></span> <span class="kc">None</span><span class="p">:</span>
@@ -415,7 +427,7 @@ h2, h3, h4, h5, h6 {
 <p>The <code>CodeBlock</code> class represents a code block.</p>
 <ul>
 <li><code>language</code> returns the language hint if one was specified.</li>
-<li>The block can be rendered back to Markdown by calling <code>render(writer: IO[str], fence: Fence)</code>.</li>
+<li>The block can be rendered back to Markdown by calling <code>render()</code>.</li>
 </ul>
 <h3>EmptyBlock<a id="emptyblock"></a></h3>
 <p><code>EmptyBlock</code> represents an empty line.</p>

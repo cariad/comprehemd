@@ -5,7 +5,7 @@ name = "pypi"
 
 [dev-packages]
 black = "==21.9b0"
-edition = "==1.0.0a10"
+edition = "==1.0.0a14"
 flake8 = "*"
 isort = "*"
 mypy = "*"
